@@ -343,7 +343,7 @@ class PorterStemmer:
         self.step5()
         return self.b[self.k0:self.k+1]
 
-"""
+
 if __name__ == '__main__':
     p = PorterStemmer()
     if len(sys.argv) > 1:
@@ -365,4 +365,3 @@ if __name__ == '__main__':
                         output += c.lower()
                 print output,
             infile.close()
-"""

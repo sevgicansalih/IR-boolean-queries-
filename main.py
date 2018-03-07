@@ -1,4 +1,4 @@
-import stemmer
+from stemmer import PorterStemmer
 import string
 import re
 
@@ -53,10 +53,12 @@ def main():
 	#print news[42]
 	#print newsTokens[42]
 	
-	for token in dictList[21577]:
-		token = token.stem(token,0,len(token))
+	print dictList[21577] , len(dictList[21577])
 
-	print dictList[21577]
+	porter = PorterStemmer()
+	for token in dictList[21577].keys():
+		dictList[21577][porter.stem(token,0,len(token)-1)] = dictList[21577].pop(token)
+	print dictList[21577],len(dictList[21577])
 
 
 def tokenize(news):
