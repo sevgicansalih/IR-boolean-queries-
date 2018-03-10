@@ -4,8 +4,9 @@ import re
 import pickle
 import copy
 import os.path
+from os import listdir
 
-directory = 'reuters/reut2-'
+directory = 'Dataset/'
 
 list = [] # holds every document by their index (i)
 
@@ -15,6 +16,34 @@ def main():
 		rex = re.compile(r'<REUTERS.*?>(.*?)</REUTERS>.*?',re.DOTALL)
 
 		news = []
+
+
+		onlyfiles = [f for f in listdir('Dataset') if os.path.isfile(os.path.join('Dataset', f))]
+		print sorted(onlyfiles)
+
+		for file in sorted(onlyfiles):
+			if file.endswith('.sgm'):
+				dir = directory+file
+				f = open(dir,'r')
+				data = f.read()
+			
+				#Find reuter tags (new id) in a single sgm file
+				reutersMatch = rex.findall(data)
+				for j in range(len(reutersMatch)):
+					titleMatch = getTitleMatch(reutersMatch[j])
+					bodyMatch = getBodyMatch(reutersMatch[j])
+					
+					if len(titleMatch)==1 and len(bodyMatch)==1:
+						news.append(titleMatch[0] + " " + bodyMatch[0])
+					elif len(titleMatch)==1 and len(bodyMatch)==0:
+						news.append(titleMatch[0])
+					elif len(titleMatch)==0 and len(bodyMatch)==1:
+						news.append(bodyMatch[0])
+					else:
+						news.append(' ')
+
+				f.close()
+		"""
 		i=0
 		while i != 22:
 			if i<10:
@@ -43,7 +72,7 @@ def main():
 					news.append(' ')
 
 			f.close()
-
+		"""
 		# now we have parsed data according to their newid-1 for their index
 
 
@@ -160,24 +189,24 @@ def checkPositions(docIDList,terms,proximity,posIndex):
 				continue
 			else:
 				if indexTerm == 1:
-					print 'gelmesi gereken list'
-					print posIndex[terms[indexTerm-1]][docID]
+					#print 'gelmesi gereken list'
+					#print posIndex[terms[indexTerm-1]][docID]
 					for pos1 in posIndex[terms[indexTerm-1]][docID]:
 						for pos2 in posIndex[term][docID]:
-							print 'type pos1: ',type(pos1),'type pos2: ',type(pos2),'pos1: ',pos1, 'pos2: ',pos2,'fark : ', abs(pos1-pos2) , 'proximity ise ', proximity[indexTerm-1]+1
+							#print 'type pos1: ',type(pos1),'type pos2: ',type(pos2),'pos1: ',pos1, 'pos2: ',pos2,'fark : ', abs(pos1-pos2) , 'proximity ise ', proximity[indexTerm-1]+1
 							if pos2-pos1>0 and pos2-pos1<= proximity[indexTerm-1]+1:
 								resultPosition.append(pos2)
-								print 'result position : ',len(resultPosition)
+								#print 'result position : ',len(resultPosition)
 				
 				
 				else:
-					print 'index term 1den farkli'
+					#print 'index term 1den farkli'
 					tempPosition = copy.deepcopy(resultPosition)
 					del resultPosition[:]
 					for idxPos,pos3 in enumerate(tempPosition):
 						for pos4 in posIndex[terms[indexTerm]][docID]:
 							if pos4-pos3 >0 and pos4-pos3 <= proximity[indexTerm-1]+1:
-								print 'girdim buraya'
+								#print 'girdim buraya'
 								resultPosition.append(pos4)
 		
 		
@@ -268,7 +297,7 @@ def positionalIndexer(stemmedDictList,stemmedNormalList):
 	tokenDict = {}
 
 	for indexDoc,aList in enumerate(stemmedNormalList):
-		print 'in another list' , indexDoc
+		#print 'in another list' , indexDoc
 		for indexToken,token in enumerate(aList):
 			#print "token ",token," index ", indexToken	
 			docIDDict = {}
